@@ -5,8 +5,6 @@ mongoose.set('useFindAndModify', false);
 const taskSchema = new mongoose.Schema({
 	title: String,
 	isCompleted: Boolean,
-	id: String,
-	date: Date,
 	userId: String
 
 })
