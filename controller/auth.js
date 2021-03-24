@@ -1,50 +1,68 @@
+require('dotenv').config();
 const User = require('../model/user')
+const ApiError = require('../error/ApiError')
+const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
 
 const checkError = (err, res) => {
 	res.send(err.message ? err.message : err);
 };
 
-const signUp = (req, res) => {
-	const {name, email, password} = req.body
 
-	User.find({email: email}).then(response => {
-		if (response.length === 0) {
-			new User({name: name, email: email, password: password})
+
+
+
+
+const signUp = (req, res, next) => {
+	const { name, email, password } = req.body
+
+
+
+	User.find({ email }).then(response => {
+		if (!response.length) {
+			new User({ name, email, password})
 			.save()
 			.catch(err => checkError(err, res))
-		} else {
-			res.send(new Error('user with this email already exists').message)
-		}
-	})
-	.catch(err => checkError(err, res));
-}
-
-const fetchUsers = (req, res) => {
-	User.find({})
-	.then(response => res.send(response))
-	.catch(err => checkError(err, res));
-}
-
-const logUserIn = (req, res) => {
-	const { email, password } = req.body
-
-	User.find({email: email, password: password})
-	.then(response => {
-		const user = response[0]
-		if(user === undefined) {
-			res.statusCode = 404
-
 			res.send()
 		} else {
-			res.send(user._id)
+			next(ApiError.badRequest('This email address is already being used'))
+		}
+	})
+	.catch((err) => checkError(err, res));
+}
+
+
+const logUserIn = (req, res, next) => {
+	const { email, password } = req.body
+
+
+	User.find({ email, password})
+	.then(response => {
+		const user = response[0]
+		const { _id, email, password } = user
+		const token = jwt.sign({_id, email, password},
+			process.env.ACCESS_TOKEN ,
+			{expiresIn: '48h'})
+
+	if(!user) {
+		next(ApiError.badRequest(' The provided credentials are invalid '))
+		} else {
+		const item = {
+			token,
+			id: user._id
+		}
+			res.send(item)
 		}
 	})
 	.catch(err => checkError(err, res));
+}
 
+const check = (req, res, next) => {
+	res.json(true)
 }
 
 module.exports = {
 	signUp,
-	logUserIn
+	logUserIn,
+	check
 }
