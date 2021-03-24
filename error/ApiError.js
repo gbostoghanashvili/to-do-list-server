@@ -5,7 +5,7 @@ class ApiError {
 	}
 
 	static badRequest(msg) {
-		return new ApiError (404, msg)
+		return new ApiError (400, msg)
 	}
 }
 

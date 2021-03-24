@@ -9,13 +9,8 @@ const checkError = (err, res) => {
 };
 
 
-
-
-
-
 const signUp = (req, res, next) => {
 	const { name, email, password } = req.body
-
 
 
 	User.find({ email }).then(response => {
@@ -35,29 +30,25 @@ const signUp = (req, res, next) => {
 const logUserIn = (req, res, next) => {
 	const { email, password } = req.body
 
-
-	User.find({ email, password})
-	.then(response => {
-		const user = response[0]
-		const { _id, email, password } = user
-		const token = jwt.sign({_id, email, password},
-			process.env.ACCESS_TOKEN ,
-			{expiresIn: '48h'})
-
-	if(!user) {
-		next(ApiError.badRequest(' The provided credentials are invalid '))
+	User.find({email, password}).then((r)=> {
+		if (!r.length) {
+				next(ApiError.badRequest(' The provided credentials are invalid '))
 		} else {
-		const item = {
-			token,
-			id: user._id
-		}
-			res.send(item)
-		}
-	})
-	.catch(err => checkError(err, res));
+			const { _id, email, password } = r;
+			const token = jwt.sign({_id, email, password},
+					process.env.ACCESS_TOKEN ,
+					{expiresIn: '48h'});
+
+			const item = {
+						token,
+						id: r._id
+					}
+						res.send(item)
+					}
+	}).catch(err => checkError(err, res));
 }
 
-const check = (req, res, next) => {
+const check = (req, res) => {
 	res.json(true)
 }
 
