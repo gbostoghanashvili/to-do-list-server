@@ -41,7 +41,7 @@ const logUserIn = (req, res, next) => {
 
 			const item = {
 						token,
-						id: r._id
+						id: r[0]._id
 					}
 						res.send(item)
 					}

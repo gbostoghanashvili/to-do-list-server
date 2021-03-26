@@ -20,8 +20,6 @@ const getTasks = (req, res) => {
 	.catch(err => checkError(err, res))
 }
 
-
-
 const removeTask = (req, res) => {
 	const {id} = req.params
 
@@ -48,11 +46,44 @@ const checkTask = (req, res) => {
 	.catch(err => checkError(err, res));
 }
 
+const checkAllTasks = (req, res) => {
+	const { check } = req.body
+	const {id} = req.params
+
+	Task.find({userId:id})
+	.then(response => {
+	const ids = response.map(task => task._id)
+		ids.forEach(id => {
+			Task.findByIdAndUpdate(id, {isCompleted:check})
+				.then(() => res.send())
+			.catch(err => checkError(err, res))
+		})
+	})
+}
+
+const deleteChecked = (req, res) => {
+	const {id} = req.params
+
+	Task.find({userId:id})
+	.then(response => {
+		const filteredTasks = response.filter(task => task.isCompleted === true)
+		const ids = filteredTasks.map(task => task._id)
+		ids.forEach(id => {
+			Task.findByIdAndRemove({_id:id})
+			.then(() => res.send())
+			.catch(err => checkError(err, res))
+		})
+		res.send()
+	})
+	.catch(err => checkError(err, res))
+}
 
 module.exports = {
 	addTask,
 	getTasks,
 	removeTask,
 	editTask,
-	checkTask
+	checkTask,
+	checkAllTasks,
+	deleteChecked
 }

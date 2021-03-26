@@ -23,6 +23,9 @@ app.get('/tasks/:id', (req, res) => taskHandler.getTasks(req, res));
 app.post('/tasks/remove/:id', (req, res) => taskHandler.removeTask(req, res));
 app.post('/tasks/edit/:id', (req, res) => taskHandler.editTask(req, res));
 app.post('/tasks/check/:id', (req, res) => taskHandler.checkTask(req, res));
+app.post('/tasks/checkAll/:id', (req, res) => taskHandler.checkAllTasks(req,res))
+app.post('/tasks/deleteChecked/:id', (req, res) => taskHandler.deleteChecked(req,res))
+
 
 app.listen(port, () => {
 	console.log(`Example app listening at http://localhost:${port}`);
