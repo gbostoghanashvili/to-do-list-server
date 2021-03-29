@@ -2,7 +2,6 @@ require('dotenv').config();
 const User = require('../model/user')
 const ApiError = require('../error/ApiError')
 const jwt = require('jsonwebtoken')
-const bcrypt = require('bcrypt')
 
 const checkError = (err, res) => {
 	res.send(err.message ? err.message : err);
@@ -34,11 +33,10 @@ const logUserIn = (req, res, next) => {
 		if (!r.length) {
 				next(ApiError.badRequest(' The provided credentials are invalid '))
 		} else {
-			const { _id, email, password } = r;
-			const token = jwt.sign({_id, email, password},
+			const { _id, email, password } = r[0];
+			const token = jwt.sign({id: _id, email: email, password: password},
 					process.env.ACCESS_TOKEN ,
 					{expiresIn: '48h'});
-
 			const item = {
 						token,
 						id: r[0]._id
