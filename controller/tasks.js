@@ -52,10 +52,9 @@ const checkAllTasks = (req, res) => {
 
 	Task.find({userId:id})
 	.then(response => {
-	const ids = response.map(task => task._id)
-		ids.forEach(id => {
-			Task.findByIdAndUpdate(id, {isCompleted:check})
-				.then(() => res.send())
+		response.forEach(task => {
+			Task.findByIdAndUpdate(task._id, {isCompleted:check})
+			.then(() => res.send())
 			.catch(err => checkError(err, res))
 		})
 	})
@@ -66,16 +65,13 @@ const deleteChecked = (req, res) => {
 
 	Task.find({userId:id})
 	.then(response => {
-		const filteredTasks = response.filter(task => task.isCompleted === true)
-		const ids = filteredTasks.map(task => task._id)
-		ids.forEach(id => {
-			Task.findByIdAndRemove({_id:id})
+		response.filter(task => task.isCompleted === true)
+		.forEach(task => {
+			Task.findByIdAndRemove({_id: task._id})
 			.then(() => res.send())
 			.catch(err => checkError(err, res))
 		})
-		res.send()
 	})
-	.catch(err => checkError(err, res))
 }
 
 module.exports = {
