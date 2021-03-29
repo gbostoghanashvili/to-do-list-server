@@ -6,7 +6,7 @@ const jwt_decode = require('jwt-decode');
 	 const token = authHeader.split(' ')[1]
 	 const decoded = jwt_decode(token);
 
-	 if (token == null) {
+	 if (token === null) {
 	 	return res.send(false)
 	 }
 
