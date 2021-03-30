@@ -1,9 +1,12 @@
-const express = require('express');
-const router = express.Router();
+const express = require('express')
+const router = express.Router()
+const authHandler = require('../controller/auth');
+const authMiddleware = require('../middleware/authmiddleware');
 
-/* GET users listing. */
-router.get('/', function(req, res, next) {
-  res.send('respond with a resource');
-});
+
+router.post('/signup', (req, res, next) => authHandler.signUp(req, res,next));
+router.post('/', (req, res, next) => authHandler.logUserIn(req, res, next));
+router.post('/check', authMiddleware, (req, res, next) => authHandler.check(req, res, next))
+
 
 module.exports = router;
