@@ -16,7 +16,7 @@ const addTask = (req, res) => {
 const getTasks = (req, res) => {
 	const {id} = req.params
 	Task.find({ userId: id })
-	.then(response => res.send(response))
+	.then(response => res.send(response.reverse()))
 	.catch(err => checkError(err, res))
 }
 
